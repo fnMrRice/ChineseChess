@@ -6,31 +6,26 @@ class ChineseChessPiece extends Piece {
     }
 
     Draw(context) {
-        const { Position, CoordinateTransform, Color, } = this;
+        const { Position, Color, } = this;
         this.Shapes = [];
         if (this.Selected) {
-            this.AddShape(new Circle(CoordinateTransform(Position), 25, Color, Color));
+            this.AddShape(new Circle(this.Board.CoordinateTransform(Position), 25, Color, Color));
         } else if (this.MouseHere) {
-            this.AddShape(new Circle(CoordinateTransform(Position), 25, Color, "rgb(237, 209, 132)"));
+            this.AddShape(new Circle(this.Board.CoordinateTransform(Position), 25, Color, "rgb(237, 209, 132)"));
         } else {
-            this.AddShape(new Circle(CoordinateTransform(Position), 25, Color, "rgb(239, 188, 84)"));
+            this.AddShape(new Circle(this.Board.CoordinateTransform(Position), 25, Color, "rgb(239, 188, 84)"));
         }
         if (this.MouseHere) {
-            this.AddShape(new Circle(CoordinateTransform(Position), 20, Color, "rgb(237, 209, 132)"));
+            this.AddShape(new Circle(this.Board.CoordinateTransform(Position), 20, Color, "rgb(237, 209, 132)"));
         } else {
-            this.AddShape(new Circle(CoordinateTransform(Position), 20, Color, "rgb(239, 188, 84)"));
+            this.AddShape(new Circle(this.Board.CoordinateTransform(Position), 20, Color, "rgb(239, 188, 84)"));
         }
-        this.AddShape(new Text(CoordinateTransform(Position), this.Text, "normal bold 34px 楷体", Color));
+        this.AddShape(new Text(this.Board.CoordinateTransform(Position), this.Text, "normal bold 34px 楷体", Color));
         super.Draw(context);
     }
 
-    CoordinateTransform(FakePosition) {
-        const { x, y } = FakePosition;
-        return { x: x * 60 - 30, y: y * 60 - 30 };
-    }
-
     PointInPiece(Position) {
-        const { x, y, } = this.CoordinateTransform(this.Position);
+        const { x, y, } = this.Board.CoordinateTransform(this.Position);
         const dx = (Position.x - x);
         const dy = (Position.y - y);
         const sq = dx * dx + dy * dy;
@@ -111,6 +106,7 @@ class ChineseChessPiece_SHUAI extends ChineseChessPiece {
 
         const target = this.__check_target_color(Position);
         if (!target) return false;
+        if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
         if (target instanceof ChineseChessPiece) this.__eat(target);
         return true;
     }
@@ -131,6 +127,7 @@ class ChineseChessPiece_SHI extends ChineseChessPiece {
 
         const target = this.__check_target_color(Position);
         if (!target) return false;
+        if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
         if (target instanceof ChineseChessPiece) this.__eat(target);
         return true;
     }
@@ -178,6 +175,7 @@ class ChineseChessPiece_XIANG extends ChineseChessPiece {
 
         const target = this.__check_target_color(Position);
         if (!target) return false;
+        if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
         if (target instanceof ChineseChessPiece) this.__eat(target);
         return true;
     }
@@ -200,6 +198,7 @@ class ChineseChessPiece_JU extends ChineseChessPiece {
 
         const target = this.__check_target_color(Position);
         if (!target) return false;
+        if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
         if (target instanceof ChineseChessPiece) this.__eat(target);
         return true;
     }
@@ -238,6 +237,7 @@ class ChineseChessPiece_MA extends ChineseChessPiece {
 
         const target = this.__check_target_color(Position);
         if (!target) return false;
+        if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
         if (target instanceof ChineseChessPiece) this.__eat(target);
         return true;
     }
@@ -260,6 +260,7 @@ class ChineseChessPiece_PAO extends ChineseChessPiece {
         if (route_count > 1) return false;
         if (route_count === 1) {
             if (target instanceof ChineseChessPiece) {
+                if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
                 this.__eat(target);
                 return true;
             } else { return false; }
@@ -304,6 +305,7 @@ class ChineseChessPiece_ZU extends ChineseChessPiece {
 
         const target = this.__check_target_color(Position);
         if (!target) return false;
+        if (target instanceof ChineseChessPiece_SHUAI) this.Board.Winner = this.Color;
         if (target instanceof ChineseChessPiece) this.__eat(target);
         return true;
     }

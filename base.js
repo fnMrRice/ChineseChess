@@ -98,49 +98,53 @@ class Text extends Shape {
 }
 
 class Grid {
-    constructor(GridSize, GridCount, Margin, Base) {
+    constructor(GridCount, StartAt) {
         this.GridCount = GridCount;
-        this.GridSize = GridSize;
-        this.Margin = Margin || { x: GridSize.x, y: GridSize.y };
-        this.Base = Base || { x: 1, y: 1 };
+        this.StartAt = StartAt || { x: 1, y: 1 };
+        this.Board = null;
     }
 
-    __line(context, x1, y1, x2, y2, fillStyle) {
+    __line(context, xs, ys, xe, ye) {
+        const { x: x1, y: y1 } = this.Board.CoordinateTransform({ x: xs, y: ys });
+        const { x: x2, y: y2 } = this.Board.CoordinateTransform({ x: xe, y: ye });
         context.moveTo(x1, y1);
         context.lineTo(x2, y2);
     }
 
     Draw(context, LineColor) {
-        const { GridCount, GridSize, Margin, __line, } = this;
+        const { GridCount, StartAt, } = this;
         context.save();
         context.beginPath();
         context.fillStyle = LineColor || "#000000";
         context.strokeStyle = LineColor || "#000000";
         for (let i = 0; i <= this.GridCount.x; i++) {
-            __line(context, Margin.x + i * GridSize.x, Margin.y, Margin.x + i * GridSize.x, Margin.y + GridCount.y * GridSize.y)
+            this.__line(context, StartAt.x + i, StartAt.y, StartAt.x + i, StartAt.y + GridCount.y)
         }
         for (let i = 0; i <= this.GridCount.y; i++) {
-            __line(context, Margin.x, Margin.y + i * GridSize.y, Margin.x + GridCount.x * GridSize.x, Margin.y + i * GridSize.y)
+            this.__line(context, StartAt.x, StartAt.y + i, StartAt.x + GridCount.x, StartAt.y + i)
         }
         context.stroke();
         context.restore();
     }
 
     PositionInfo(Position) {
-        const { GridCount, GridSize, Margin, Base, } = this;
+        const { GridCount, StartAt, } = this;
+        const StartAtPos = this.Board.CoordinateTransform(StartAt);
+        const { GridSize, } = this.Board;
         const result = { grid: { x: null, y: null, }, cross: { x: null, y: null, }, };
         let { x, y, } = Position;
         // console.log('Position: ', Position);
-        x -= Margin.x;
-        y -= Margin.y;
+        x -= StartAtPos.x;
+        y -= StartAtPos.y;
         result.grid.x = Math.floor(x / GridSize.x) + 1;
         result.grid.y = Math.floor(y / GridSize.y) + 1;
         if (result.grid.x > GridCount.x || result.grid.y > GridCount.y) { result.grid = null; }
         else if (result.grid.x <= 0 || result.grid.y <= 0) { result.grid = null; }
         else {
-            result.grid.x += Base.x - 1;
-            result.grid.y += Base.y - 1;
+            result.grid.x += StartAt.x - 1;
+            result.grid.y += StartAt.y - 1;
         }
+        // console.log(GridSize);
         x += GridSize.x / 2;
         y += GridSize.y / 2;
         result.cross.x = Math.floor(x / GridSize.x) + 1;
@@ -148,9 +152,10 @@ class Grid {
         if (result.cross.x > GridCount.x + 1 || result.cross.y > GridCount.y + 1) { result.cross = null; }
         else if (result.cross.x <= 0 || result.cross.y <= 0) { result.cross = null; }
         else {
-            result.cross.x += Base.x - 1;
-            result.cross.y += Base.y - 1;
+            result.cross.x += StartAt.x - 1;
+            result.cross.y += StartAt.y - 1;
         }
+        // console.log(result);
         return result;
     }
 }
@@ -226,10 +231,12 @@ class Piece {
 }
 
 class Board {
-    constructor(PiecePosition) {
+    constructor(PiecePosition, GirdSize) {
         this.Grids = [];
         this.Pieces = [];
-        this.PiecePosition = PiecePosition || "cross";
+        this.Winner = null;
+        this.GridSize = GirdSize;
+        this.PiecePosition = PiecePosition || "cross"; // 棋子放在格子(grid)中或者放在交叉点(cross)
     }
 
     AddPiece(...Pieces) {
@@ -244,6 +251,7 @@ class Board {
     AddGrid(...Grids) {
         const contact = elem => [].concat(...elem.map(v => Array.isArray(v) ? contact(v) : v));
         contact(Grids).forEach(element => {
+            element.Board = this;
             this.Grids.push(element)
         });
         return this;

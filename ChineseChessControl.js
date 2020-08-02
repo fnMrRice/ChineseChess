@@ -1,7 +1,7 @@
-const Main = (canvas, clear) => {
+const Main = (canvas, buttons) => {
     if (canvas.getContext) {
-        canvas.width = 540;
-        canvas.height = 600;
+        canvas.width = 600;
+        canvas.height = 700;
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const board = new ChineseChessBoard();
@@ -46,12 +46,13 @@ const Main = (canvas, clear) => {
         canvas.addEventListener("mousemove", OnHover);
         canvas.addEventListener("contextmenu", OnCancel);
 
+        const { clear, } = buttons;
         const OnReset = e => {
             canvas.removeEventListener("mousedown", OnSelect);
             canvas.removeEventListener("mousemove", OnHover);
             canvas.removeEventListener("contextmenu", OnCancel);
             clear.removeEventListener("click", OnReset);
-            Main(canvas, clear);
+            Main(canvas, buttons);
         }
         clear.addEventListener("click", OnReset);
     } else {

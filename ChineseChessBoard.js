@@ -1,14 +1,14 @@
 class ChineseChessBoard extends Board {
     constructor() {
-        super("cross");
+        super("cross", { x: 60, y: 60 });
         this.AddGrid();
         this.AddPiece();
     }
 
     AddGrid(elems) {
         if (elems) super.AddGrid(elems);
-        this.RedBoard = new Grid(new Size(60, 60), new Size(8, 4), new Size(30, 30));
-        this.BlackBoard = new Grid(new Size(60, 60), new Size(8, 4), new Size(30, 330), { x: 1, y: 6, });
+        this.RedBoard = new Grid(new Size(8, 4), { x: 1, y: 1 });
+        this.BlackBoard = new Grid(new Size(8, 4), { x: 1, y: 6 });
         super.AddGrid(this.RedBoard, this.BlackBoard);
     }
 
@@ -75,8 +75,8 @@ class ChineseChessBoard extends Board {
     }
 
     DrawExtra(context) {
-        const { __line, } = this;
         context.save();
+        // Draw extra lines
         context.beginPath();
         context.strokeStyle = "black";
         this.__line(context, new Size(1, 5), new Size(1, 6), true);
@@ -94,24 +94,36 @@ class ChineseChessBoard extends Board {
         this.__mark(context, new Size(2, 8));
         this.__mark(context, new Size(8, 8));
         context.stroke();
+        // 绘制楚河汉界文字
         context.beginPath();
-        const WORD_CHU = this.CoordinateTransform({ x: 2, y: 6 });
-        context.translate(WORD_CHU.x + 30, WORD_CHU.y - 30);
+        const WORD_CHU = this.CoordinateTransform({ x: 1, y: 5.5 });
+        context.translate(WORD_CHU.x, WORD_CHU.y);
         context.rotate(270 * Math.PI / 180);
         context.font = "normal bold 50px 楷体";
         context.fillStyle = "black";
         context.textBaseline = "middle";
         context.textAlign = "center";
-        context.fillText("楚", 0, 0);
-        context.fillText("河", 0, 60);
+        context.fillText("楚", 0, 1.5 * this.GridSize.x);
+        context.fillText("河", 0, 2.5 * this.GridSize.x);
         context.rotate(180 * Math.PI / 180);
-        context.fillText("漢", 0, -300);
-        context.fillText("界", 0, -240);
+        context.fillText("漢", 0, -6.5 * this.GridSize.x);
+        context.fillText("界", 0, -5.5 * this.GridSize.x);
+        context.restore();
+        // 绘制棋盘上数字
+        context.save();
+        context.font = "normal bold 16px 隶书";
+        context.fillStyle = "black";
+        context.textBaseline = "middle";
+        context.textAlign = "center";
+        [1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((v, i) => {
+            context.fillText(v.toString(), v * this.GridSize.x, 0.25 * this.GridSize.y);
+            context.fillText("九八七六五四三二一".charAt(i), v * this.GridSize.x, 10.75 * this.GridSize.y);
+        });
         context.restore();
     }
 
     CoordinateTransform(FakePosition) {
         const { x, y } = FakePosition;
-        return { x: x * 60 - 30, y: y * 60 - 30 };
+        return { x: x * this.GridSize.x, y: y * this.GridSize.y };
     }
 }
