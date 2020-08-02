@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chinese Chess</title>
+    <style>
+        #canvas {
+            position: fixed;
+            left: 0;
+            right: 0;
+            margin: auto;
+            top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas_container">
+        <canvas id="canvas"> </canvas>
+    </div>
+    <div id="controller">
+        <div id="ClearBtn">Clear</div>
+    </div>
+    <script charset="UTF-8" src="./base.js" type="text/javascript"></script>
+    <script charset="UTF-8" src="./ChineseChessBoard.js" type="text/javascript"></script>
+    <script charset="UTF-8" src="./ChineseChessPieces.js" type="text/javascript"></script>
+    <script charset="UTF-8" src="./ChineseChessControl.js" type="text/javascript"></script>
+    <script charset="UTF-8" type="text/javascript">
+        const canvas = document.getElementById("canvas");
+        const ClearBtn = document.getElementById("ClearBtn");
+        Main(canvas, ClearBtn);
+    </script>
+</body>
+
+</html>
