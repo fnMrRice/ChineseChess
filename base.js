@@ -11,7 +11,8 @@ class Shape {
         this.FillColor = FillColor || "transparent";
     }
 
-    Draw(context) { }
+    Move(Position) { throw ReferenceError('Shape:Move(Position): This method cannot be called'); }
+    Draw(context) { throw ReferenceError('Shape:Draw(context): This method cannot be called'); }
 }
 
 class Line extends Shape {
@@ -84,7 +85,6 @@ class Text extends Shape {
     }
 
     Draw(context) {
-        const old = { font: context.font, textBaseline: context.textBaseline, fillStyle: context.fillStyle, textAlign: context.textAlign, };
         const { x, y } = this.Center;
         context.save();
         context.beginPath();
@@ -220,9 +220,7 @@ class Piece {
         return this.Move({ x: Position.x - x, y: Position.y - y });
     }
 
-    PointInPiece(Position) {
-        return true;
-    }
+    PointInPiece(Position) { throw ReferenceError('Piece:PointInPiece(Position): This method cannot be called'); }
 
     __eat(Piece) {
         const Pieces = this.Board.Pieces;

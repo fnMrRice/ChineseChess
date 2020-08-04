@@ -45,16 +45,17 @@ class ChineseChessBoard extends Board {
         super.AddPiece(...ZU); // 兵
     }
 
+    // Draw line from Begin to End
     __line(context, Begin, End, isFake) {
-        // const { CoordinateTransform, } = this;
         const { x: x1, y: y1, } = isFake ? this.CoordinateTransform(Begin) : Begin;
         const { x: x2, y: y2, } = isFake ? this.CoordinateTransform(End) : End;
         context.moveTo(x1, y1);
         context.lineTo(x2, y2);
     }
 
+    // Draw a mark to the given position
     __mark(context, Position) {
-        const { x, y, } = this.CoordinateTransform(Position);
+        const { x, y, } = this.CoordinateTransform(Position); // Get real position
         if (Position.x != 1 && Position.y != 1) { // left top
             this.__line(context, { x: x - 10, y: y - 5 }, { x: x - 5, y: y - 5 });
             this.__line(context, { x: x - 5, y: y - 10 }, { x: x - 5, y: y - 5 });
@@ -109,7 +110,7 @@ class ChineseChessBoard extends Board {
         context.fillText("漢", 0, -6.5 * this.GridSize.x);
         context.fillText("界", 0, -5.5 * this.GridSize.x);
         context.restore();
-        // 绘制棋盘上数字
+        // draw numbers up and down
         context.save();
         context.font = "normal bold 16px 隶书";
         context.fillStyle = "black";
@@ -122,6 +123,7 @@ class ChineseChessBoard extends Board {
         context.restore();
     }
 
+    // transform a fake position to real position
     CoordinateTransform(FakePosition) {
         const { x, y } = FakePosition;
         return { x: x * this.GridSize.x, y: y * this.GridSize.y };

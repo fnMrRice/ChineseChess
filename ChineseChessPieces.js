@@ -24,6 +24,7 @@ class ChineseChessPiece extends Piece {
         super.Draw(context);
     }
 
+    // check if the given position is on the piece
     PointInPiece(Position) {
         const { x, y, } = this.Board.CoordinateTransform(this.Position);
         const dx = (Position.x - x);
@@ -32,6 +33,11 @@ class ChineseChessPiece extends Piece {
         return sq < 25 * 25;
     }
 
+    // get piece at target position
+    // returns: 
+    //          false: same color
+    //          true:  no piece at target position
+    //          piece: different color and returns the piece
     __check_target_color(Target) {
         const { x: new_x, y: new_y } = Target;
         for (let i = 0; i < this.Board.Pieces.length; i++) { // Check if target is same color
@@ -44,6 +50,7 @@ class ChineseChessPiece extends Piece {
         return true;
     }
 
+    // check if piece in the 9 grids of board
     __check_in_mid_9(Target) {
         const { x: new_x, y: new_y } = Target;
         if (new_x < 4 || 6 < new_x) return false; // Limit scope
@@ -55,6 +62,7 @@ class ChineseChessPiece extends Piece {
         return true;
     }
 
+    // avoid out-of range
     __check_in_board(Target) {
         const { x: new_x, y: new_y } = Target;
         if (new_x < 1 || 9 < new_x) return false;
@@ -62,6 +70,8 @@ class ChineseChessPiece extends Piece {
         return true;
     }
 
+    // check if there is pieces in the way
+    // returns count of pieces in the way
     __check_piece_in_route(Target) {
         const { x, y } = this.Position;
         const { x: new_x, y: new_y } = Target;
@@ -80,6 +90,7 @@ class ChineseChessPiece extends Piece {
         return conuter;
     }
 
+    // check if pieces move a straight way
     __check_move_straight(Target) {
         const { x, y } = this.Position;
         const { x: new_x, y: new_y } = Target;
